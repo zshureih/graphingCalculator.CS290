@@ -1,0 +1,41 @@
+#graph-wrapper {
+    display: inline-flex;
+    position: relative;
+    top: 0;
+    left: 0;
+}
+
+#graph {
+    top: 0;
+    left: 0;
+}
+
+aside {
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    width: 30%;
+}
+
+header {
+  background-color: #000;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+
+header a {
+  color: #fff;
+}
+
+.site-title {
+  font-family: "Roboto Slab", serif;
+  font-size: 80px;
+  font-weight: 100;
+  margin: 0 0 0 20px;
+  padding-top: 30px;
+}
+
+.site-title a:hover {
+  text-decoration: none;
+}
