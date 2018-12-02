@@ -11,3 +11,8 @@ Graphs 2-Dimensional parametric functions
 Buttons to insert special formatting and operations
 Save frequently used functions and equations
 
+Tutorial used to set up canvas:
+https://www.youtube.com/watch?v=E-_Lc6FrDRw
+
+Open-source calculator:
+http://www.graphr.org/
