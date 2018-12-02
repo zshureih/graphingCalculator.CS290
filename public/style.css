@@ -1,18 +1,23 @@
 #graph-wrapper {
-    display: inline-flex;
-    position: relative;
+    position: absolute;
     top: 0;
     left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 2;
 }
 
 #graph {
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 aside {
     position: absolute;
-    display: inline-block;
+    z-index: 5;
+    display: inline-flex;
     right: 0;
     width: 30%;
 }
@@ -22,6 +27,7 @@ header {
   align-items: center;
   display: flex;
   position: relative;
+  z-index: 5;
 }
 
 header a {
