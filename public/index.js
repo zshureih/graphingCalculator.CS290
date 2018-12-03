@@ -162,15 +162,18 @@
     * clears canvas
     ***************************************************/
     this.clearScreen = function () {
-        this.ctx.fillStyle = "rgb(255, 255, 255)";
+        this.lines = [];
+        this.ctx.fillStyle = "rgb(255,255,255)";
         this.ctx.fillRect(0, 0, this.width, this.height);
+        this.draw();
     };
 
     /***************************************************
      * sets background grid
     ***************************************************/
     this.drawGrid = function () {
-        this.clearScreen();
+        this.ctx.fillStyle = "rgb(255,255,255)";
+        this.ctx.fillRect(0, 0, this.width, this.height);
 
         var x1 = this.currentCoordinate.x1;
         var x2 = this.currentCoordinate.x2;
@@ -356,7 +359,7 @@
         for(var i = 0; i < this.lines.length; i++) {
             var equation = this.lines[i].equation;
             var color = this.lines[i].color;
-            this.drawCurve(equation, color, 3);
+            this.drawCurve(equation, color, 5);
         }
     };
 
@@ -414,7 +417,7 @@
         var scale = this.getScale();
 
         if(!this.calcCache[equation]) {
-            this.calcCache[equation] = new Object;
+            this.calcCache[equation] = {equation};
         }
 
         this.ctx.strokeStyle = color;
