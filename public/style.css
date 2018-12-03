@@ -1,3 +1,13 @@
+#sidebar-wrapper {
+  position: absolute;
+  right: 1px;
+  width: 30%;
+  z-index: 5;
+  border-left: 1px;
+  height: 100%;
+  overflow: auto;
+}
+
 #graph-wrapper {
     position: absolute;
     top: 0;
@@ -5,6 +15,7 @@
     height: 100%;
     width: 100%;
     z-index: 2;
+    margin-right: 30%;
 }
 
 #graph {
@@ -12,14 +23,6 @@
     left: 0;
     width: 100%;
     height: 100%;
-}
-
-aside {
-    position: absolute;
-    z-index: 5;
-    display: inline-flex;
-    right: 0;
-    width: 30%;
 }
 
 header {

@@ -3,36 +3,14 @@
 /****************************************************
  * global variables: DOM Objects
  ***************************************************/
-var updateButton = document.getElementById('update-button');
-var equationInputField = document.getElementById('inputField');
-var clearButton = document.getElementById('clear-button');
-var graph = document.getElementById('graph');
-var context = canvas.getContext('2d');
 var i; //iterator used throughout calculations, reset at the beginning of each for-loop
 
-/****************************************************
- * common function buttons:
- * these functions add common functions and their 
- * correct syntaxes
- ***************************************************/
-
-var sinButton = document.getElementById('sin-button');
-sinButton.addEventListener('click', function (event) {
-    if (equationInputField.value === "") {
-        equationInputField.value = 'sin(x)';
-    } else {
-        equationInputField.value = equationInputField.value + " sin(x)";
-    }
-});
-
-
 /***************************************************
- * Javascrip Calculator Functions
+ * Javascript Calculator Functions
  ***************************************************/
 
  function JSgCalc (element) {
-    this.graph = graph;
-    this.ctx = graph.getContext('2d');
+    this.graph = document.getElementById('graph');
     this.width = document.getElementById('graph-wrapper').width;
     this.height = document.getElementById('graph-wrapper').height;
     this.maxGridLines = {x: 13, y: 13};
@@ -44,32 +22,155 @@ sinButton.addEventListener('click', function (event) {
     this.mouseButton = 0;
     this.canvasX = this.graph.offsetLeft;
     this.canvasY = this.graph.offsetTop;
-    this.calcCache = new Object;
+    this.calcCache = new Object; //to be used with MongoDB
     this.quality = 1;
     this.zoomFactor = 0.1;
     this.lines = [];
+    this.lineColors = {
+         "#FF0000": -1, "#0000FF": -1, "#00FF00": -1, "#FF00FF": -1, "#00FFFF": -1,
+         "#000000": -1, "#990000": -1, "#000099": -1, "#009900": -1, "#999900": -1, "#990099": -1, "#009999": -1
+     };
     this.fillareapath;
 
     
 
 
     /***************************************************
-    * helper math functions
+    * smaller helper functions
     ***************************************************/
     this.arbFloor = function (value, roundTo) {
         return Math.floor(value/roundTo) * roundTo;
-    }
+    };
 
     this.arbRound = function(value, roundTo) {
         return Math.round(value/roundTo) * roundTo;
-    }
+    };
 
+    this.copyCoordinate = function (currentCoordinate) {
+        return {x1: currentCoordinate.x1, y1: currentCoordinate.y1, x2: currentCoordinate.x2, y2: currentCoordinate.y2};
+    };
+
+    this.getScale = function () {
+        return {x: Math.abs(this.startCoordinate.x2 - this.startCoordinate.x1),
+                y: Math.abs(this.startCoordinate.y2 - this.startCoordinate.y1)};
+    };
+
+    this.float_fix = function (num) {
+        return Math.round(num * 10000000) / 10000000;
+    };
+
+    this.getRange = function () {
+        return {x: Math.abs(this.startCoordinate.x2 - this.startCoordinate.x1),
+                y: Math.abs(this.startCoordinate.y2 - this.startCoordinate.y1)};
+    };
+
+    /***************************************************
+    * equation handling functions
+    ***************************************************/
+
+    this.variablesInExpression = function (expr) {
+        //i don't know enough about how math parses equations, so I am going to trust this
+        var obj = {};
+        expr.traverse(function (node) {
+            if ((node.type === 'SymbolNode') && (math[node.name] === undefined)) {
+                obj[node.name] = true;
+            }
+        });
+        return Object.keys(obj).sort();
+    };
+
+    this.makeFunction = function (equation) {
+        var expr = math.parse(equation);
+        var code = expr.compile(math);
+        var variables = this.variablesInExpression(expr);
+
+        return function(x) {
+            var scope = {};
+
+            variables.forEach(function (name) {
+                scope[name] = x;
+            });
+
+            return code.eval(scope);
+        }
+    };
+
+    /***************************************************
+    * mouse functions
+    ***************************************************/
+    this.checkMove = function (x, y) {
+        //if no change in mouse position
+        if(x === this.prevDrag.x && y === this.prevDrag.y) {
+            return;
+        }
+
+        var scale = this.getScale();
+        if(this.mouseButton === 1) {
+            if(0) {
+                //zoom
+            } else { //click and drag
+            this.currentCoordinate.x1 = this.startCoordinate.x1 - ((x - this.startDrag.x) / scale.x);
+            this.currentCoordinate.x2 = this.startCoordinate.x2 - ((x - this.startDrag.x) / scale.x);
+            this.currentCoordinate.y1 = this.startCoordinate.y1 - ((y - this.startDrag.y) / scale.y);
+            this.currentCoordinate.x1 = this.startCoordinate.y2 - ((x - this.startDrag.y) / scale.y);
+            this.draw();
+            }
+            this.prevDrag = {x : x, y: y};
+        }
+    };
+
+    this.mouseDown = function(event) {
+        document.body.style.curso = "hand";
+        if(this.mouseButton == 0) {
+            //if(zoom)
+            this.startDrag.x = event.pageX - this.canvasX;
+            this.startDrag.y = event.pageY - this.canvasY;
+            this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
+        }
+        this.mouseButton = 1;
+    };
+
+    this.mouseUp = function(event) {
+        //if(zoom)
+        this.mouseButton = 0;
+        this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
+    };
+
+    this.mouseWheel = function(event, delta) {
+        if(delta > 0) {
+            this.zoom(this.zoomFactor, event);
+        } else {
+            this.zoom(-this.zoomFactor, event);
+        }
+    };
+
+    this.zoom = function (scale, event) {
+        var range = this.getRange();
+        if(event) {
+            var mousex = event.pageX - this.canvasX;
+            var mousey = event.pageY - this.canvasY;
+            var mousetop = 1 - (mousey / this.height);
+            var mouseleft = mousex / this.width;
+            this.currentCoordinate.x1 += range.x * scale * mouseleft;
+            this.currentCoordinate.y1 += range.y * scale * mousetop;
+            this.currentCoordinate.x2 += range.x * scale * (1 - mouseleft);
+            this.currentCoordinate.y2 += range.y * scale * (1 - mousetop);
+        } else {
+            this.currentCoordinate.x1 += range.x * scale;
+            this.currentCoordinate.y1 += range.y * scale;
+            this.currentCoordinate.x2 -= range.x * scale;
+            this.currentCoordinate.y2 -= range.y * scale;
+        }
+        this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
+        this.draw();
+    }
+    
     /***************************************************
     * clears canvas
     ***************************************************/
     this.clearScreen = function () {
         this.ctx.fillStyle = "rgb(255, 255, 255)";
-        this.ctx.fillRect(0, 0, canvas.width, canvas.height);
+        this.ctx.fillRect(0, 0, this.width, this.height);
     };
 
     /***************************************************
@@ -91,7 +192,7 @@ sinButton.addEventListener('click', function (event) {
         var yscale = Math.max(yRange/this.height, 1E-20);
 
         //calculate the scale of gridlines (scale of graph)
-        for(i = 0.0000000000001, c = 0; xRange/i > this.maxGridLines.x - 1; c++) {
+        for(var i = 0.0000000000001, c = 0; xRange/i > this.maxGridLines.x - 1; c++) {
             if(c % 3 === 1) {
                 i *= 2.5; //alternationg between 2, 5, and 10
             } else {
@@ -106,7 +207,7 @@ sinButton.addEventListener('click', function (event) {
         this.xgridscale = i;
 
         //same as above but for y
-        for (i = 0.0000000000001, c = 0; yRange / i > this.maxGridLines.y - 1; c++) {
+        for (var i = 0.0000000000001, c = 0; yRange / i > this.maxGridLines.y - 1; c++) {
             if (c % 3 === 1) {
                 i *= 2.5; //alternationg between 2, 5, and 10
             } else {
@@ -133,8 +234,8 @@ sinButton.addEventListener('click', function (event) {
         var yMainAxis = -1;
 
         //fix floating point values
-        currX = float_fix(currX);
-        currY = float_fix(currY);
+        currX = this.float_fix(currX);
+        currY = this.float_fix(currY);
 
         //y=0 appears on the screen, move text to follow
         if(y2 >= 0 && y1 <= 0) {
@@ -159,10 +260,8 @@ sinButton.addEventListener('click', function (event) {
             yMainAxis = -1;
         }
 
-        var significantDigits = String(currX).length + 3;
-
         //draw vertical lines
-        for(i = 0; i < this.maxGridLines.x; i++) {
+        for(var i = 0; i < this.maxGridLines.x; i++) {
             var xpos = ((currX-x1)/xRange) * this.width //position of line in pixels
             //make sure it is on the screen
             if(xpos - 0.5 > this.width + 1 || xpos < 0) {
@@ -171,11 +270,14 @@ sinButton.addEventListener('click', function (event) {
             }
 
             //just in case
-            currX = float_fix(currX);
+            currX = this.float_fix(currX);
 
             if(currX === 0) {
                 xaxis = xpos;
             }
+
+            this.ctx.fillStyle = "rgb(190,190,190)";//grey lines
+            this.ctx.fillRect(xpos - 0.5, 0, 1, this.height);
 
             this.ctx.fillStyle = "rgb(0,0,0)"; //black lines
 
@@ -197,12 +299,12 @@ sinButton.addEventListener('click', function (event) {
             currX += this.xgridscale;
 
         }//end of vertical lines
+
         this.ctx.textAlign = "right";
-        significantDigits = String(currY).length + 3;
 
         //draw horizontal lines
-        for (i = 0; i < this.maxGridLines.y; i++) {
-            var ypos = ((curry - y1) / yRange) * this.height //position of line in pixels
+        for (var i = 0; i < this.maxGridLines.y; i++) {
+            var ypos = this.height - ((currY - y1) / yRange) * this.height; //position of line in pixels
             //make sure it is on the screen
             if (ypos - 0.5 > this.height + 1 || ypos < 0) {
                 currY += this.ygridscale;
@@ -210,11 +312,14 @@ sinButton.addEventListener('click', function (event) {
             }
 
             //just in case
-            currY = float_fix(currY);
+            currY = this.float_fix(currY);
 
-            if (currY === 0) {
+            if (currY == 0) {
                 yaxis = ypos;
             }
+
+            this.ctx.fillStyle = "rgb(190,190,190)";//draw grey lines
+            this.ctx.fillRect(0, ypos-0.5, this.width, 1);
 
             this.ctx.fillStyle = "rgb(0,0,0)"; //black lines
 
@@ -236,7 +341,7 @@ sinButton.addEventListener('click', function (event) {
                 this.ctx.fillText(currY, xAxisPosition, ypos + 3);
             }
 
-            curry += this.ygridscale;
+            currY += this.ygridscale;
 
         }//end of horizontal lines
 
@@ -247,78 +352,208 @@ sinButton.addEventListener('click', function (event) {
         if(yaxis) {
             this.ctx.fillRect(0, yaxis - 0.5, this.width, 1);
         }
-     };
-
-    /****************************************************
-    * This function takes the input from the input field
-    * and parses it. Then it clears the canvas and runs
-    * the drawCurve function
-    ****************************************************/
-
-    this.updateCanvas = function () {
-
-        var equation = math.parse(equationInputField.value);
-        console.log(equationInputField.value);
-        console.log(equation);
-
-        //graph.clearRect(0, 0, canvas.width, canvas.height);
-        this.drawCurve(equation);
     };
 
     /****************************************************
-    * This function draws the function
+    * is called every time the canvas margins / functions 
+    * change
+    ****************************************************/
+    this.draw = function () {
+        this.drawGrid();
+        for(var i = 0; i < this.lines.length; i++) {
+            console.log(i);
+            console.log(this.lines.length);
+            var equation = this.lines[i].equation;
+            var color = this.lines[i].color;
+            this.drawCurve(equation, color, 3);
+            console.log(equation + " drawn");
+        }
+    };
+
+    /****************************************************
+    * This function resizes the graph
     ***************************************************/
-    this.drawCurve = function (equation) {
+    this.resizeGraph = function () {
+        var oldHeight = this.height;
+        var oldWidth = this.width;
+        var graphWrapper = document.getElementById("graph-wrapper");
+        var sidebarWrapper = document.getElementById("sidebar-wrapper");
+        var header = document.getElementById("header-wrapper");
+        graphWrapper.width = (graphWrapper.offsetWidth - sidebarWrapper.offsetWidth);
+        graphWrapper.height = (window.innerHeight - header.offsetHeight);
+
+        
+        graph.width = graphWrapper.width;
+        graph.height = graphWrapper.height;
+        this.ctx.height = graphWrapper.height;
+        this.ctx.width = graphWrapper.width;
+        this.graph.height = graphWrapper.height;
+        this.graph.width = graphWrapper.width;
+        this.height = graphWrapper.height;
+        this.width = graphWrapper.width;
+        console.log("Resized to " + graphWrapper.width + "x" + graphWrapper.height);
+
+        //compute new boundaries of graph
+        this.currentCoordinate.x1 *= (graphWrapper.width / oldWidth);
+        this.currentCoordinate.x2 *= (graphWrapper.width / oldWidth);
+        this.currentCoordinate.y1 *= (graphWrapper.height / oldHeight);
+        this.currentCoordinate.y2 *= (graphWrapper.height / oldHeight);
+        this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
+
+        //compute grid lines to draw
+        this.maxGridLines.x = 0.015 * graphWrapper.width;
+        this.maxGridLines.y = 0.015 * graphWrapper.height;
+        this.draw();
+    }
+
+    /****************************************************
+    * This function draws the equation
+    ***************************************************/
+    this.drawCurve = function (equation, color, thickness) {
         if(!equation)
             return false;
 
-        var i, n = 100; //iterator and max iterations
-        var xPixel, yPixel; //ith value between xMin/xMax and yMin/yMax respectively
-        var xMax = 10, yMax = 10;
-        var xMin = -10, yMin = -10;
-        var mathX, mathY; //values in math coordinates
-        var percentX, percentY; //these values vary between 0 and 1
-        var expression = equation.compile();
+        var x1 = this.currentCoordinate.x1;
+        var x2 = this.currentCoordinate.x2;
+        var y1 = this.currentCoordinate.y1;
+        var y2 = this.currentCoordinate.y2;
 
-        //defines variables inside the math expression
-        var scope = {
-            x: 0,
-            y: 0,
-            t: 0
-        };
+        var xRange = x2 - x1;
+        var yRange = y2 - y1;
 
-        //t variable in function
-        var time = 0;
-        var timeIncrement = 0.1;
+        var scale = this.getScale();
 
-        graph.beginPath();
-
-        for (i = 0; i < n; i++) {
-            percentX = i / (n - 1);
-
-            mathX = percentX * (xMax - xMin) + xMin;
-
-            //evaluate expression
-            scope.x = mathX;
-            scope.t = time;
-            time += timeIncrement;
-            mathY = expression.eval(scope);
-
-            //project mathY into percentY
-            percentY = (mathY - yMin) / (yMax - yMin);
-
-            //flip Y to match canvas coordinates
-            percentY = 1 - percentY;
-
-            //project percents to pixels
-            xPixel = percentX * canvas.width;
-            yPixel = percentY * canvas.width;
-
-            graph.lineTo(xPixel, yPixel);
+        if(!this.calcCache[equation]) {
+            this.calcCache[equation] = new Object;
         }
 
-        //draws the line plotted in the above for-loop
-        graph.stroke();
+        this.ctx.strokeStyle = color;
+        var old_linewidth = this.ctx.linewidth;
+        if(thickness) {
+            this.ctx.linewidth = thickness;
+        }
+        this.ctx.beginPath();
+
+        //keep track of how many times we've gone off screen
+        var lineExists = 0;
+        var lastPoint = 0;
+
+        this.fillareapath = [];
+        this.fillareapath.push([0, this.height - ((-y1) * scale.y)]);
+
+        var inverseQuality = 1.0 / this.quality;
+        var inverseScaleX = 1.0 / scale.x;
+
+        var maxXVal = this.width + inverseQuality;
+
+        var graphedFunction = this.makeFunction(equation);
+
+        for(var i = 0; i < maxXVal; i += inverseQuality) {
+            var xVal = i * inverseScaleX + x1; //calculate x for a given pixel
+            var yVal = graphedFunction(xVal);
+
+            var ypos = this.height - ((yVal - y1) * scale.y);
+            //the line is on the screen
+            if(ypos >= (this.height * -1) && ypos <= this.height * 2) {
+                if(lineExists > 1) {
+                    this.ctx.beginPath();
+                }
+
+                if(lastPoint !== false && ((lastPoint > 0 && yVal < 0) || (lastPoint < 0 && yVal > 0))) {
+                    this.ctx.moveTo(i, ypos);
+                } else {
+                    this.ctx.lineTo(i, ypos);
+                }
+
+                lineExists = 0;
+                lastPoint = false;
+            } else if(lineExists <= 1) {//the line is off the screen
+                this.ctx.lineTo(i, ypos);
+                lastPoint = yVal;
+                this.ctx.stroke(); //end the line
+                lineExists++;
+            }
+            this.fillareapath.push([i, ypos]);
+        }
+        this.fillareapath.push([maxXVal, this.height - ((-y1) * scale.y)]);
+        this.ctx.stroke();
+        this.ctx.linewidth = old_linewidth;
+    };
+
+    /****************************************************
+    * This adds a new line to the lines array to be 
+    * graphed
+    ***************************************************/
+    this.newLine = function() {
+        var equationInputField = document.getElementById('inputField');
+
+        //decide on color
+        var newColor = -1;
+        for(var color in this.lineColors) {
+            if(this.lineColors[color] == -1){
+                console.log(color);
+                newColor = color;
+                break;
+            }
+        }
+
+        if(newColor == -1) {
+            alert("There are no available colors left for the new function");
+        } else {
+            this.lineColors[color] = this.lines.length;
+        }
+
+        var newLine = {equation: equationInputField.value,
+                        color: newColor};
+
+        this.lines.push(newLine);
+        console.log(this.lines);
+        this.draw();
+    };
+
+
+    /****************************************************
+    * This function initializes the canvas
+    ***************************************************/
+    this.initCanvas = function () {
+        if(this.graph.getContext) {
+            this.ctx = graph.getContext('2d');
+            this.resizeGraph();
+            
+            this.currentCoordinate = {x1: -5 * (this.width / this.height), y1: -5, x2: 5 * (this.width / this.height), y2: 5};
+            this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
+            //jsgui.evaulate
+
+            //this.animate();
+
+            var self = this;
+            graph.addEventListener('mousemove', function(event) {
+                self.canvasX = self.graph.offsetLeft;
+                self.canvasY = self.graph.offsetTop;
+                self.checkMove(event.pageX - self.canvasX, event.pageY - self.canvasY);
+            });
+            graph.addEventListener('mousedown', function(event) {
+                self.mouseDown(event);
+            });
+            graph.addEventListener('wheel', function(event, deltaX, deltaY) {
+                self.mouseWheel(event, deltaY); 
+                return false;
+            });
+            graph.addEventListener('mouseup', function(event) {
+                self.mouseUp(event);
+            });
+
+            window.onresize = function () {
+                //if sidewraper is visible
+                    //graph-wrapper width = (wrapper.width - sidewrapper.innerWidth - toolbar.innerWidth)
+                //else 
+                    //graph-wrapper width = wrapper.width - toolbar.width
+                self.resizeGraph();
+            };
+        }
+        else {
+            alert("Sorry, your browser is not supported");
+        }
     }
  };
 
@@ -327,15 +562,19 @@ sinButton.addEventListener('click', function (event) {
   */
  window.addEventListener('DOMContentLoaded', function () {
 
+    var newFunctionButton = document.getElementById('new-function-button');
+    var clearButton = document.getElementById('clear-button');
+    var context = graph.getContext('2d');
+
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
-    jsCalc.drawGrid();
+    jsCalc.initCanvas();
     
-    updateButton.addEventListener('click', function (event) {
-        JSgCalc.updateCanvas();
+    newFunctionButton.addEventListener('click', function (event) {
+        jsCalc.newLine();
     });
 
     clearButton.addEventListener('click', function (event) {
-        JSgCalc.clearScreen();
+        jsCalc.clearScreen();
     });
  });
