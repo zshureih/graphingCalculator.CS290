@@ -1,28 +1,28 @@
 #sidebar-wrapper {
   position: absolute;
-  right: 1px;
+  background: #000;
+  bottom: 0;
+  right: 0;
   width: 30%;
+  height: 100%;
   z-index: 5;
   border-left: 1px;
-  height: 100%;
-  overflow: auto;
 }
 
 #graph-wrapper {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 2;
-    margin-right: 30%;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
 }
 
 #graph {
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  bottom: 0;
+  left: 0;
+  width: 70%;
+  height: 100%;
 }
 
 header {
@@ -47,4 +47,9 @@ header a {
 
 .site-title a:hover {
   text-decoration: none;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
 }

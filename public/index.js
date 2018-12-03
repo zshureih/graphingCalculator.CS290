@@ -1,10 +1,3 @@
-//trying to load images
-
-/****************************************************
- * global variables: DOM Objects
- ***************************************************/
-var i; //iterator used throughout calculations, reset at the beginning of each for-loop
-
 /***************************************************
  * Javascript Calculator Functions
  ***************************************************/
@@ -23,7 +16,7 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
     this.canvasX = this.graph.offsetLeft;
     this.canvasY = this.graph.offsetTop;
     this.calcCache = new Object; //to be used with MongoDB
-    this.quality = 1;
+    this.quality = 1.0;
     this.zoomFactor = 0.1;
     this.lines = [];
     this.lineColors = {
@@ -51,8 +44,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
     };
 
     this.getScale = function () {
-        return {x: Math.abs(this.startCoordinate.x2 - this.startCoordinate.x1),
-                y: Math.abs(this.startCoordinate.y2 - this.startCoordinate.y1)};
+        return {x: this.width / Math.abs(this.startCoordinate.x2 - this.startCoordinate.x1),
+                y: this.height / Math.abs(this.startCoordinate.y2 - this.startCoordinate.y1)};
     };
 
     this.float_fix = function (num) {
@@ -97,7 +90,7 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
 
     /***************************************************
     * mouse functions
-    ***************************************************/
+    ***************************************************
     this.checkMove = function (x, y) {
         //if no change in mouse position
         if(x === this.prevDrag.x && y === this.prevDrag.y) {
@@ -109,18 +102,18 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
             if(0) {
                 //zoom
             } else { //click and drag
-            this.currentCoordinate.x1 = this.startCoordinate.x1 - ((x - this.startDrag.x) / scale.x);
-            this.currentCoordinate.x2 = this.startCoordinate.x2 - ((x - this.startDrag.x) / scale.x);
-            this.currentCoordinate.y1 = this.startCoordinate.y1 - ((y - this.startDrag.y) / scale.y);
-            this.currentCoordinate.x1 = this.startCoordinate.y2 - ((x - this.startDrag.y) / scale.y);
-            this.draw();
+                this.currentCoordinate.x1 = this.startCoordinate.x1 - ((x - this.startDrag.x) / scale.x);
+                this.currentCoordinate.x2 = this.startCoordinate.x2 - ((x - this.startDrag.x) / scale.x);
+                this.currentCoordinate.y1 = this.startCoordinate.y1 - ((y - this.startDrag.y) / scale.y);
+                this.currentCoordinate.x1 = this.startCoordinate.y2 - ((x - this.startDrag.y) / scale.y);
+                this.draw();
             }
             this.prevDrag = {x : x, y: y};
         }
     };
 
     this.mouseDown = function(event) {
-        document.body.style.curso = "hand";
+        document.body.style.cursor = "hand";
         if(this.mouseButton == 0) {
             //if(zoom)
             this.startDrag.x = event.pageX - this.canvasX;
@@ -136,8 +129,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
         this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
     };
 
-    this.mouseWheel = function(event, delta) {
-        if(delta > 0) {
+    this.mouseWheel = function(event, deltaX, deltaY) {
+        if(deltaX > 0) {
             this.zoom(this.zoomFactor, event);
         } else {
             this.zoom(-this.zoomFactor, event);
@@ -153,8 +146,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
             var mouseleft = mousex / this.width;
             this.currentCoordinate.x1 += range.x * scale * mouseleft;
             this.currentCoordinate.y1 += range.y * scale * mousetop;
-            this.currentCoordinate.x2 += range.x * scale * (1 - mouseleft);
-            this.currentCoordinate.y2 += range.y * scale * (1 - mousetop);
+            this.currentCoordinate.x2 -= range.x * scale * (1 - mouseleft);
+            this.currentCoordinate.y2 -= range.y * scale * (1 - mousetop);
         } else {
             this.currentCoordinate.x1 += range.x * scale;
             this.currentCoordinate.y1 += range.y * scale;
@@ -192,7 +185,7 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
         var yscale = Math.max(yRange/this.height, 1E-20);
 
         //calculate the scale of gridlines (scale of graph)
-        for(var i = 0.0000000000001, c = 0; xRange/i > this.maxGridLines.x - 1; c++) {
+        for (i = 0.000000000001, c = 0; xRange/i > this.maxGridLines.x - 1; c++) {
             if(c % 3 === 1) {
                 i *= 2.5; //alternationg between 2, 5, and 10
             } else {
@@ -207,8 +200,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
         this.xgridscale = i;
 
         //same as above but for y
-        for (var i = 0.0000000000001, c = 0; yRange / i > this.maxGridLines.y - 1; c++) {
-            if (c % 3 === 1) {
+        for (i = 0.000000000001, c = 0; yRange / i > this.maxGridLines.y - 1; c++) {
+            if (c % 3 == 1) {
                 i *= 2.5; //alternationg between 2, 5, and 10
             } else {
                 i *= 2;
@@ -219,7 +212,7 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
             }
         }
         
-        this.ygridscale = 1;
+        this.ygridscale = i;
 
         this.ctx.font = "10pt 'open sans'"; //set font
         this.ctx.textAlign = "center";
@@ -355,18 +348,15 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
     };
 
     /****************************************************
-    * is called every time the canvas margins / functions 
-    * change
+    * draw is called every time the canvas margins / 
+    * functions change
     ****************************************************/
     this.draw = function () {
         this.drawGrid();
         for(var i = 0; i < this.lines.length; i++) {
-            console.log(i);
-            console.log(this.lines.length);
             var equation = this.lines[i].equation;
             var color = this.lines[i].color;
             this.drawCurve(equation, color, 3);
-            console.log(equation + " drawn");
         }
     };
 
@@ -435,7 +425,7 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
         this.ctx.beginPath();
 
         //keep track of how many times we've gone off screen
-        var lineExists = 0;
+        var lineExists = 2;
         var lastPoint = 0;
 
         this.fillareapath = [];
@@ -444,15 +434,59 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
         var inverseQuality = 1.0 / this.quality;
         var inverseScaleX = 1.0 / scale.x;
 
+        console.log(inverseQuality, inverseScaleX);
+
         var maxXVal = this.width + inverseQuality;
+        var minXVal = x1;
 
         var graphedFunction = this.makeFunction(equation);
 
-        for(var i = 0; i < maxXVal; i += inverseQuality) {
-            var xVal = i * inverseScaleX + x1; //calculate x for a given pixel
-            var yVal = graphedFunction(xVal);
+        /*//this method starts from 0 then goes up with respect to x,
+        //when it hits maxXVal, it starts at 0 and goes down with respct to x to minXVal
+        console.log(this.height);
 
+        for(var i = this.width / 2; i < maxXVal; i += inverseQuality) {
+            var xVal = i * inverseScaleX;
+            var yVal = graphedFunction(xVal);
+            
             var ypos = this.height - ((yVal - y1) * scale.y);
+            
+            console.log(i, xVal, yVal, ypos);
+
+
+            //the line is on the canvas
+            if(ypos >= (this.height * -1) && ypos <= (this.height * 2)) {
+                if(lineExists > 1) {
+                    this.ctx.beginPath();
+                    console.log("begin");
+                }
+
+                if(lastPoint !== false && ((lastPoint > 0 && yVal < 0) || (lastPoint < 0 && yVal > 0))) {
+                    this.ctx.moveTo(i, ypos);
+                } else {
+                    this.ctx.lineTo(i, ypos);
+                }
+
+                lineExists = 0;
+                lastPoint = false;
+            } else if(lineExists <= 1) { //line is off the screen
+                this.ctx.lineTo(i, ypos);
+                lastPoint = yVal;
+                this.ctx.stroke(); //end of line
+                lineExists++;
+            }
+        }
+    }*/
+
+
+        //this method starts at the far end of the x-axis
+
+        for(var i = 0; i < maxXVal; i += inverseQuality) {
+                var xVal = i * inverseScaleX + x1; //calculate x for a given pixel
+                var yVal = graphedFunction(xVal);
+                console.log(i, xVal, yVal);
+
+                var ypos = this.height - ((yVal - y1) * scale.y);
             //the line is on the screen
             if(ypos >= (this.height * -1) && ypos <= this.height * 2) {
                 if(lineExists > 1) {
@@ -473,7 +507,6 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
                 this.ctx.stroke(); //end the line
                 lineExists++;
             }
-            this.fillareapath.push([i, ypos]);
         }
         this.fillareapath.push([maxXVal, this.height - ((-y1) * scale.y)]);
         this.ctx.stroke();
@@ -491,7 +524,6 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
         var newColor = -1;
         for(var color in this.lineColors) {
             if(this.lineColors[color] == -1){
-                console.log(color);
                 newColor = color;
                 break;
             }
@@ -507,10 +539,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
                         color: newColor};
 
         this.lines.push(newLine);
-        console.log(this.lines);
         this.draw();
     };
-
 
     /****************************************************
     * This function initializes the canvas
@@ -522,9 +552,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
             
             this.currentCoordinate = {x1: -5 * (this.width / this.height), y1: -5, x2: 5 * (this.width / this.height), y2: 5};
             this.startCoordinate = this.copyCoordinate(this.currentCoordinate);
-            //jsgui.evaulate
-
-            //this.animate();
+            
+            this.draw();
 
             var self = this;
             graph.addEventListener('mousemove', function(event) {
@@ -535,8 +564,8 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
             graph.addEventListener('mousedown', function(event) {
                 self.mouseDown(event);
             });
-            graph.addEventListener('wheel', function(event, deltaX, deltaY) {
-                self.mouseWheel(event, deltaY); 
+            graph.addEventListener('wheel', function(event, delta) {
+                self.mouseWheel(event, delta); 
                 return false;
             });
             graph.addEventListener('mouseup', function(event) {
@@ -544,10 +573,6 @@ var i; //iterator used throughout calculations, reset at the beginning of each f
             });
 
             window.onresize = function () {
-                //if sidewraper is visible
-                    //graph-wrapper width = (wrapper.width - sidewrapper.innerWidth - toolbar.innerWidth)
-                //else 
-                    //graph-wrapper width = wrapper.width - toolbar.width
                 self.resizeGraph();
             };
         }
