@@ -15,7 +15,7 @@
     this.mouseButton = 0;
     this.canvasX = this.graph.offsetLeft;
     this.canvasY = this.graph.offsetTop;
-    this.calcCache = new Object; //to be used with MongoDB
+    this.calcCache = []; //to be used with MongoDB
     this.quality = 1.0;
     this.zoomFactor = 0.1;
     this.lines = [];
@@ -517,6 +517,32 @@
     };
 
     /****************************************************
+    * This adds a new input field to the sidebar
+    ***************************************************/
+    this.insertNewInput = function () {
+        //decide on color
+        //the function is called after the new
+        var newColor = -1;
+        for (var color in this.lineColors) {
+            if (this.lineColors[color] == -1) {
+                newColor = color;
+                break;
+            }
+        }
+
+        if (newColor == -1) {
+            alert("There are no available colors left for the new input field");
+        } else {
+            var newInputHTML = Handlebars.templates.inputField({
+                color: newColor,
+                lineNumber: this.lines.length - 1
+            }); 
+            var inputContainer = document.getElementById('sidebar');
+            inputContainer.insertAdjacentHTML('beforeend', newInputHTML);
+        }
+    }
+
+    /****************************************************
     * This adds a new line to the lines array to be 
     * graphed
     ***************************************************/
@@ -536,13 +562,14 @@
             alert("There are no available colors left for the new function");
         } else {
             this.lineColors[color] = this.lines.length;
-        }
+            var newLine = {
+                equation: equationInputField.value,
+                color: newColor
+            };
 
-        var newLine = {equation: equationInputField.value,
-                        color: newColor};
-
-        this.lines.push(newLine);
-        this.draw();
+            this.lines.push(newLine);
+            this.draw();
+        }        
     };
 
     /****************************************************
@@ -600,6 +627,7 @@
     
     newFunctionButton.addEventListener('click', function (event) {
         jsCalc.newLine();
+        jsCalc.insertNewInput();
     });
 
     clearButton.addEventListener('click', function (event) {
