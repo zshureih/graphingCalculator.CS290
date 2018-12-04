@@ -2,17 +2,20 @@ var path = require('path');
 var express = require('express');
 var exphbs = require('express-handlebars');
 var bodyParser = require('body-parser');
+
 var MongoClient = require('mongodb').MongoClient;
-var mongoHost = process.env.MONGO_HOST;
+
+var mongoHost = "classmongo.engr.oregonstate.edu";
 var mongoPort = process.env.MONGO_PORT || '27017';
-var mongoUsername = process.env.MONGO_USERNAME;
-var mongoPassword = process.env.MONGO_PASSWORD;
-var mongoDBName = process.env.MONGO_DB_NAME;
+var mongoUsername = "cs290_conklica";
+var mongoPassword = "cs290_conklica";
+var mongoDBName = "cs290_conklica";
 var mongoURL = "mongodb://" + mongoUsername + ":" + mongoPassword + "@" + mongoHost + ":" + mongoPort + "/" + mongoDBName;
 var mongoDB = null;
 var app = express();
 //var postData = require('./postData.json');
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 3002;
+console.log(mongoURL);
 
 
 app.engine('handlebars', exphbs({ defaultLayout: 'main' }));
@@ -34,6 +37,7 @@ app.get('/equations', function(req,res,next) {
     if (err) {
       res.status(500).send("Error connecting to the DB");
     }
+    console.log("here eq");
     res.status(200).render('canvas', {
       equations: equationsDocs
     });
@@ -45,9 +49,11 @@ app.get('/equations/:n', function (req, res, next) {
     var equationsCollection = mongoDB.collection('equations');
     equationsCollection.find({equationName: n}).toArray(function(err,equationsDocs) {
       if (err) {
+        console.log("here n");
         res.status(500).send("Error connecting to the DB.");
       }
       else if (equationsDocs.length > 0) {
+        console.log("here ny");
         res.status(200).render('canvas',equationsDocs[0]);
       }
       else {
@@ -61,13 +67,20 @@ app.get('/equations/:n', function (req, res, next) {
         res.status(200).render('posts', singlePost);
     } else {
         next();
-    }*/
+    }
+    db.createCollection( "test3", { properties: { func: {bsonType: "string", description: "must be a string and is required" }, } }  )*/
+
 });
 
 app.get('*', function (req, res) {
     //res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
     res.status(404).render('404', {});
 });
+/*
+app.listen(port, function () {
+  console.log("== Server listening on port", port);
+});
+*/
 
 MongoClient.connect(mongoURL, function (err, client) {
   if (err) {
