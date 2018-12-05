@@ -86,6 +86,7 @@ app.post('/push-equation', function (req, res, next) {
         if(err) {
           res.status(500).send("Error saving eqaution to DB");
         } else if(result){
+          console.log('hey')
           res.status(200).send("Success");
         } else {
           next();
