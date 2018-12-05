@@ -76,12 +76,12 @@ app.get('*', function (req, res) {
     //res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
     res.status(404).render('404', {});
 });
-/*
+
 app.listen(port, function () {
   console.log("== Server listening on port", port);
 });
-*/
 
+/*
 MongoClient.connect(mongoURL, function (err, client) {
   if (err) {
     throw err;
@@ -90,4 +90,4 @@ MongoClient.connect(mongoURL, function (err, client) {
   app.listen(port, function () {
     console.log("== Server listening on port", port);
   });
-});
+});*/

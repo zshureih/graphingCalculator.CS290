@@ -437,8 +437,6 @@
         var inverseQuality = 1.0 / this.quality;
         var inverseScaleX = 1.0 / scale.x;
 
-        console.log(inverseQuality, inverseScaleX);
-
         var maxXVal = this.width + inverseQuality;
         var minXVal = x1;
 
@@ -487,7 +485,6 @@
         for(var i = 0; i < maxXVal; i += inverseQuality) {
                 var xVal = i * inverseScaleX + x1; //calculate x for a given pixel
                 var yVal = graphedFunction(xVal);
-                console.log(i, xVal, yVal);
 
                 var ypos = this.height - ((yVal - y1) * scale.y);
             //the line is on the screen
@@ -514,6 +511,7 @@
         this.fillareapath.push([maxXVal, this.height - ((-y1) * scale.y)]);
         this.ctx.stroke();
         this.ctx.linewidth = old_linewidth;
+        console.log(equation + " drawn");
     };
 
     /****************************************************
@@ -535,7 +533,7 @@
         } else {
             var newInputHTML = Handlebars.templates.inputField({
                 color: newColor,
-                lineNumber: this.lines.length - 1
+                lineNumber: this.lines.length
             }); 
             var inputContainer = document.getElementById('sidebar');
             inputContainer.insertAdjacentHTML('beforeend', newInputHTML);
@@ -547,7 +545,12 @@
     * graphed
     ***************************************************/
     this.newLine = function() {
-        var equationInputField = document.getElementById('inputField');
+        var equationInputFields = document.getElementsByClassName('input-field');
+        var currentLineNumber = this.lines.length;
+        
+        if(equationInputFields[currentLineNumber].value == "") {
+            return;
+        }
 
         //decide on color
         var newColor = -1;
@@ -561,15 +564,48 @@
         if(newColor == -1) {
             alert("There are no available colors left for the new function");
         } else {
-            this.lineColors[color] = this.lines.length;
+            this.lineColors[newColor] = currentLineNumber;
             var newLine = {
-                equation: equationInputField.value,
+                equation: equationInputFields[currentLineNumber].value,
                 color: newColor
             };
 
             this.lines.push(newLine);
+            this.insertNewInput();
             this.draw();
         }        
+    };
+
+    /****************************************************
+    * This function removes inputs, and if the input has
+    * a graphed line, removes it as well. keeps order of
+    * used colors as well
+    ***************************************************/
+
+    this.removeInput = function() {
+        var inputWrappers = document.getElementsByClassName('input-wrapper');
+        var inputField = document.getElementsByClassName('input-field');
+        var fieldColor = inputField[inputWrappers.length - 1].getAttribute('data-color');
+        var currentLineNumber = this.lines.length - 1;
+
+        //default input field
+        if(inputWrappers.length == 1) {
+            inputField[currentLineNumber].value = "";
+            this.lineColors[fieldColor] = -1;
+            this.lines.splice(0, 1);
+            this.draw();
+            return;
+        }
+
+        //additional input fields
+        if(inputWrappers.length > 1) {
+            if (inputField[inputWrappers.length - 1].value != "" && this.lines.length == inputWrappers.length) {
+                this.lines.splice(currentLineNumber, 1);
+            } 
+            this.lineColors[fieldColor] = -1;
+            inputWrappers[inputWrappers.length - 1].remove();
+            this.draw();
+        }
     };
 
     /****************************************************
@@ -618,6 +654,7 @@
  window.addEventListener('DOMContentLoaded', function () {
 
     var newFunctionButton = document.getElementById('new-function-button');
+    var removeInputButton = document.getElementById('remove-function-button');
     var clearButton = document.getElementById('clear-button');
     var context = graph.getContext('2d');
 
@@ -627,10 +664,9 @@
     
     newFunctionButton.addEventListener('click', function (event) {
         jsCalc.newLine();
-        jsCalc.insertNewInput();
     });
 
-    clearButton.addEventListener('click', function (event) {
-        jsCalc.clearScreen();
+    removeInputButton.addEventListener('click', function (event) {
+        jsCalc.removeInput();
     });
  });
