@@ -405,6 +405,7 @@
     ***************************************************/
 
     this.pushToDB = function () {
+        var mongoDB = require('mongodb').mongoDB;
         var equationsCollection = mongoDB.collection('equations');
 
         for(var i = 0; i < calcCache.length; i++) {
