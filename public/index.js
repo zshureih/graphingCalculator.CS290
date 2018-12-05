@@ -720,7 +720,6 @@
  window.addEventListener('DOMContentLoaded', function () {
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
-    var savedFunctions = document.getElementById('mongo-storage').childNodes;
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
@@ -735,6 +734,7 @@
         jsCalc.removeInput();
     });
 
+    var savedFunctions = document.getElementById('mongo-storage').childNodes;
     for(var i = 0; i < savedFunctions.length; i++) {
         if(!savedFunctions[i].length) {
             savedFunctions[i].addEventListener('click', function (event) {
