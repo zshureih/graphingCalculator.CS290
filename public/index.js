@@ -424,7 +424,7 @@
                     func: equation
                 });
                 var storedFunctionContainer = document.getElementById("mongo-storage");
-                storedFunctionContainer.insertAdjacentElement('beforeend', storedFunctionHTML);
+                storedFunctionContainer.insertAdjacentHTML('beforeend', storedFunctionHTML);
             } else {
                 alert("Error storing function: " + event.target.response);
             }
