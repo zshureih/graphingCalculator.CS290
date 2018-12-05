@@ -76,8 +76,8 @@ app.listen(port, function () {
 */
 
 app.post('/', function (req, res) {
-  console.log("hello world");
-})
+  res.send('hello world');
+});
 
 MongoClient.connect(mongoURL, function (err, client) {
   if (err) {
