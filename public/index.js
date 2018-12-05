@@ -408,9 +408,10 @@
         var self = this;
         console.log(mongoStorage);
         for(var i = 0; i < mongoStorage.length; i++) {
-            console.log(element);
-            if (self.calcCache.indexOf(element) == -1)
-                self.calcCache.push(element);
+
+            console.log(mongoStorage[i]);
+            if (self.calcCache.indexOf(mongoStorage[i]) == -1)
+                self.calcCache.push(mongoStorage[i]);
         }
         console.log(this.calcCache);
     }
