@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "prestart": "npm run build",
+    "prestart": "npm run build build2",
     "build": "handlebars views/partials/inputField.handlebars -f public/inputFieldTemplate.js",
-    "build": "handlebars views/partials/storedFunction.handlebars -f public/storedFunctionTemplate.js"
+    "build2": "handlebars views/partials/storedFunction.handlebars -f public/storedFunctionTemplate.js"
   },
   "repository": {
     "type": "git",
