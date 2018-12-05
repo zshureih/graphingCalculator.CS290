@@ -404,7 +404,7 @@
     *  element into the calcCache 
     ***************************************************/
     this.loadDBToCache = function() {
-        var mongoStorage = getElementById("mongo-storage");
+        var mongoStorage = document.getElementById("mongo-storage");
         console.log(mongoStorage);
     }
 
