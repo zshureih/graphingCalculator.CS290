@@ -740,6 +740,7 @@
             console.log(savedFunctions[i]);
             savedFunctions[i].addEventListener('click', function (event) {
                 var equations = document.getElementById('mongo-storage').childNodes;
+                console.log(equations);
                 var equation = equations[i].getAttribute('data-equation');
                 jsCalc.writeStoredEquation(equation);
             });
