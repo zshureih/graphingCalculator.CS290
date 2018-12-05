@@ -400,6 +400,22 @@
     }
 
     /****************************************************
+    * This function pushes equations from calcCache into
+    * MongoDB
+    ***************************************************/
+
+    this.pushToDB = function () {
+        var equationsCollection = mongoDB.collection('equations');
+
+        for(var i = 0; i < calcCache.length; i++) {
+            if(!equationsCollection.find({func: calcCache[i]})) {
+                equationsCollection.insert({func: calcCache[i]});
+                console.log(calcCache[i] + " pushed to MongoDB");
+            }
+        }
+    }
+
+    /****************************************************
     * This function draws the equation
     ***************************************************/
     this.drawCurve = function (equation, color, thickness) {
@@ -418,6 +434,7 @@
 
         if(!this.calcCache[equation]) {
             this.calcCache[equation] = {equation};
+            this.pushToDB();
         }
 
         this.ctx.strokeStyle = color;
