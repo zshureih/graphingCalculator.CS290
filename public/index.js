@@ -74,6 +74,10 @@
 
     this.makeFunction = function (equation) {
         var expr = math.parse(equation);
+        if(!expr) {
+            alert("Equation syntax is not supported");
+            return false;
+        }
         var code = expr.compile(math);
         var variables = this.variablesInExpression(expr);
 
@@ -494,6 +498,9 @@
         var minXVal = x1;
 
         var graphedFunction = this.makeFunction(equation);
+        if(graphedFunction == false) {
+            return;
+        }
 
         /*//this method starts from 0 then goes up with respect to x,
         //when it hits maxXVal, it starts at 0 and goes down with respct to x to minXVal
