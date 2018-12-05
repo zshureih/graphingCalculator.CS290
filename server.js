@@ -75,8 +75,23 @@ app.listen(port, function () {
 });
 */
 
-app.post('/push-equation', function (req, res) {
-  res.send('hello world');
+app.post('/push-equation', function (req, res, next) {
+  console.log('received post');
+  if(req.body && req.body.func) {
+    var equationsCollection = mongoDB.collection('equations');
+    equationsCollection.insert(
+      {func: req.body.func},
+      function (err, result) {
+        if(err) {
+          res.status(500).send("Error saving eqaution to DB");
+        } else {
+          res.status(200).send("Success");
+        }
+      }
+    );
+  } else {
+    res.status(400).send("request needs a body with a function");
+  }
 });
 
 MongoClient.connect(mongoURL, function (err, client) {

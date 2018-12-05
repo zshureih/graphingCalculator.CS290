@@ -420,19 +420,19 @@
 
         postRequest.addEventListener('load', function (event) {
             if(event.target.status === 200) {
-                var storedFunctionTemplate = Handlebars.templates.
+                var storedFunctionTemplate = Handlebars.templates.storedFunction;
+                var newStoredFunctionHTML = storedFunctionTemplate({
+                    func: equation
+                });
+                var storedFunctionContainer = document.getElementById("mongo-storage");
+                storedFunctionContainer.insertAdjacentElement('beforeend', newStoredFunctionHTML);
+            } else {
+                alert("Error storing function: " + event.target.response);
             }
-        })
+        });
 
-        var mongoDB = require('mongodb').mongoDB;
-        var equationsCollection = mongoDB.collection('equations');
-
-        for(var i = 0; i < calcCache.length; i++) {
-            if(!equationsCollection.find({func: calcCache[i]})) {
-                equationsCollection.insert({func: calcCache[i]});
-                console.log(calcCache[i] + " pushed to MongoDB");
-            }
-        }
+        postRequest.setRequestHeader('Content-Type', 'application/json');
+        postRequest.send(requestBody);
     }
 
     /****************************************************
