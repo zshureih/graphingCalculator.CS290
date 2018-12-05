@@ -400,11 +400,30 @@
     }
 
     /****************************************************
+    * This function pulls equations from mongoDB into 
+    * calcCache
+    ***************************************************/
+
+    /****************************************************
     * This function pushes equations from calcCache into
     * MongoDB
     ***************************************************/
 
-    this.pushToDB = function () {
+    this.pushToDB = function (equation) {
+        var postRequest = new XMLHttpRequest();
+        var requestURL = '/push-equation';
+        postRequest.open('POST', requestURL);
+        
+        var requestBody = JSON.stringify({ 
+            func: equation
+        });
+
+        postRequest.addEventListener('load', function (event) {
+            if(event.target.status === 200) {
+                var storedFunctionTemplate = Handlebars.templates.
+            }
+        })
+
         var mongoDB = require('mongodb').mongoDB;
         var equationsCollection = mongoDB.collection('equations');
 
@@ -435,7 +454,7 @@
 
         if(!this.calcCache[equation]) {
             this.calcCache[equation] = {equation};
-            this.pushToDB();
+            this.pushToDB(equation);
         }
 
         this.ctx.strokeStyle = color;
