@@ -738,8 +738,9 @@
     for(var i = 0; i < savedFunctions.length; i++) {
         if(!savedFunctions[i].length) {
             console.log(savedFunctions[i]);
-            savedFunctions[i].addEventListener('click', function (element) {
-                var equation = element.getAttribute('data-equation');
+            savedFunctions[i].addEventListener('click', function (event) {
+                var equations = document.getElementById('mongo-storage').childNodes;
+                var equation = equations[i].getAttribute('data-equation');
                 jsCalc.writeStoredEquation(equation);
             });
         }
