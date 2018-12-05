@@ -411,8 +411,9 @@
             console.log(mongoStorage[i]);
             if(!mongoStorage[i].length){
                 var func = mongoStorage[i].getAttribute("data-equation");
-                if (self.calcCache.indexOf(func) == -1)
+                if (self.calcCache.indexOf(func) == -1){
                     self.calcCache.push(func);
+                }
             }
         }
         console.log(this.calcCache);
@@ -703,12 +704,12 @@
   * wait until DOM is loaded to add event liseners
   */
  window.addEventListener('DOMContentLoaded', function () {
-
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
     var clearButton = document.getElementById('clear-button');
-    //var context = graph.getContext('2d');
-    console.log(newFunctionButton);
+    var context = graph.getContext('2d');
+
+    //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
     jsCalc.initCanvas();
     jsCalc.loadDBToCache();
