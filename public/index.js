@@ -3,7 +3,7 @@
  ***************************************************/
 
  function JSgCalc (element) {
-    this.graph = document.getElementById('graph');
+    this.graph = document.getElementById(element);
     this.width = document.getElementById('graph-wrapper').width;
     this.height = document.getElementById('graph-wrapper').height;
     this.maxGridLines = {x: 13, y: 13};
@@ -415,7 +415,7 @@
             }
         }
         console.log(this.calcCache);
-    }
+    };
 
     /****************************************************
     * This function pushes equations from calcCache into
@@ -446,7 +446,7 @@
 
         postRequest.setRequestHeader('Content-Type', 'application/json');
         postRequest.send(requestBody);
-    }
+    };
 
     /****************************************************
     * This function draws the equation
@@ -702,7 +702,6 @@
   * wait until DOM is loaded to add event liseners
   */
  window.addEventListener('DOMContentLoaded', function () {
-
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
 
