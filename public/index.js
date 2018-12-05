@@ -707,7 +707,7 @@
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
     var savedFunctions = document.getElementById('mongo-storage').childNodes;
-    var inputBoxes = document.getElementsByClassName()
+    var inputBoxes = document.getElementsByClassName('input-field');
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
