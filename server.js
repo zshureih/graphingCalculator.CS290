@@ -24,8 +24,9 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res, next) {
+    var equationsCollection = mongoDB.collection('equations');
     if(this) {
-        res.status(200).render('canvas');
+        res.status(200).render('canvas', equationsCollection);
     } else {
         next();
     }

@@ -6,13 +6,19 @@
 
     <div id="sidebar-wrapper">
         <aside id="sidebar">
-        <button id="new-function-button">+</button>
-        <button id="remove-function-button">-</button>
-        <div class="input-wrapper">
-            <button width="50" height="50" style="background-color:#FF0000"></button>
-            <input data-color="#FF0000" data-lineNumber="0" class="input-field">
-        </div>
+            <button id="new-function-button">+</button>
+            <button id="remove-function-button">-</button>
+            <div class="input-wrapper">
+                <button width="50" height="50" style="background-color:#FF0000"></button>
+                <input data-color="#FF0000" data-lineNumber="0" class="input-field">
+            </div>
 
+            <div id="mongo-storage">
+                <p>Stored Functions</p>
+                {{#each this}}
+                    {{> storedFunction}}
+                {{/each}}
+            </div>
         </aside>
     </div>
     
