@@ -409,7 +409,7 @@
         postRequest.open('POST', requestURL);
         
         var requestBody = JSON.stringify({ 
-            req: allFunctions
+            req: "allFunctions"
         });
 
         postRequest.addEventListener('load', function (event) {

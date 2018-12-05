@@ -25,9 +25,10 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res, next) {
     var equationsCollection = mongoDB.collection('equations');
+    var equations = equationsCollection.find().toArray();
     if(this) {
-      console.log(equationsCollection);
-      res.status(200).render('canvas', equationsCollection);
+      console.log(equations);
+      res.status(200).render('canvas', equations);
     } else {
         next();
     }
