@@ -17,8 +17,10 @@
 
         <div id="mongo-storage">
             <p>Stored Functions</p>
-            {{#each func}}
-                {{> storedFunction}}
+            {{#each}}
+                {{#if func}}
+                    {{> storedFunction}}
+                {{/if}}
             {{/each}}
         </div>
     </div>

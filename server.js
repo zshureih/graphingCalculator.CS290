@@ -30,7 +30,6 @@ app.get('/', function (req, res, next) {
         res.status(500).send("Error connecting to the DB");
       } else if(equationDocs.length > 0) {
         console.log(equationDocs);
-        console.log(equationDocs[0]);
         res.status(200).render('canvas', equationDocs);
       } else {
         next();
