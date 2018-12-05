@@ -707,6 +707,7 @@
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
     var clearButton = document.getElementById('clear-button');
+    console.log(removeInputButton);
     var context = graph.getContext('2d');
 
     //click update button to graph new functions
