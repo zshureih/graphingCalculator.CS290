@@ -408,10 +408,12 @@
         var self = this;
         console.log(mongoStorage);
         for(var i = 0; i < mongoStorage.length; i++) {
-
             console.log(mongoStorage[i]);
-            if (self.calcCache.indexOf(mongoStorage[i]) == -1)
-                self.calcCache.push(mongoStorage[i]);
+            if(!mongoStorage[i].length){
+                var func = mongoStorage[i].getAttribute("data-equation");
+                if (self.calcCache.indexOf(func) == -1)
+                    self.calcCache.push(func);
+            }
         }
         console.log(this.calcCache);
     }
