@@ -404,15 +404,14 @@
     *  element into the calcCache 
     ***************************************************/
     this.loadDBToCache = function() {
-        var mongoStorage = document.getElementById("mongo-storage");
-        var mongoArray = Array.from(mongoStorage);
+        var mongoStorage = document.getElementById("mongo-storage").childNodes;
         var self = this;
-        console.log(mongoArray);
-        mongoArray.forEach(function (element) {
+        console.log(mongoStorage);
+        for(var i = 0; i < mongoStorage.length; i++) {
             console.log(element);
-            if(self.calcCache.indexOf(element) == -1)
+            if (self.calcCache.indexOf(element) == -1)
                 self.calcCache.push(element);
-        });
+        }
         console.log(this.calcCache);
     }
 
