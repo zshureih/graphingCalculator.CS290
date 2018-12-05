@@ -707,9 +707,8 @@
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
     var clearButton = document.getElementById('clear-button');
-    var context = graph.getContext('2d');
-
-    //click update button to graph new functions
+    //var context = graph.getContext('2d');
+    console.log(newFunctionButton);
     jsCalc = new JSgCalc("graph");
     jsCalc.initCanvas();
     jsCalc.loadDBToCache();
