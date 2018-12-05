@@ -26,7 +26,8 @@ app.use(express.static(__dirname + '/public'));
 app.get('/', function (req, res, next) {
     var equationsCollection = mongoDB.collection('equations');
     if(this) {
-        res.status(200).render('canvas', equationsCollection);
+      console.log(equationsCollection);
+      res.status(200).render('canvas', equationsCollection);
     } else {
         next();
     }
@@ -48,7 +49,7 @@ app.get('/equations', function(req,res,next) {
 app.get('/equations/:n', function (req, res, next) {
     var func = req.params.n;
     var equationsCollection = mongoDB.collection('equations');
-    equationsCollection.find({equationNamess: func}).toArray(function(err,equationsDocs) {
+    equationsCollection.find().toArray(function(err,equationsDocs) {
       if (err) {
         console.log("here n");
         res.status(500).send("Error connecting to the DB.");
@@ -80,11 +81,13 @@ app.post('/get-equations', function(req, res, next) {
   console.log('received post');
   if(req.body) {
     var equationsCollection = mongoDB.collection('equations');
+    console.log(equationsCollection);
     equationsCollection.find().toArray(function (err, equations) {
       if(err) {
         res.status(500).send("Error communicating with DB");
       } else if (equations.length > 0) {
-        res.status(200).render('canvas', equations);
+        console.log(equations);
+        res.status(200).send("success", equations);
       } else {
         next();
       }
@@ -100,7 +103,7 @@ app.post('/push-equation', function (req, res, next) {
       {func: req.body.func},
       function (err, result) {
         if(err) {
-          res.status(500).send("Error saving eqaution to DB");
+          res.status(500).send("Error saving equation to DB");
         } else if(result){
           res.status(200).send("Success");
         } else {

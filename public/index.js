@@ -403,22 +403,18 @@
     * This function pulls equations from mongoDB into 
     * calcCache
     ***************************************************/
-    this.loadDB = function() {
+    this.loadDBToCache = function() {
         var postRequest = new XMLHttpRequest();
         var requestURL = '/get-equations';
         postRequest.open('POST', requestURL);
         
         var requestBody = JSON.stringify({ 
-            func: equation
+            req: allFunctions
         });
 
         postRequest.addEventListener('load', function (event) {
             if(event.target.status === 200) {
-                var storedFunctionHTML = Handlebars.templates.storedFunction({
-                    func: equation
-                });
-                var storedFunctionContainer = document.getElementById("mongo-storage");
-                storedFunctionContainer.insertAdjacentHTML('beforeend', storedFunctionHTML);
+                
             } else {
                 alert("Error storing function: " + event.target.response);
             }
@@ -449,6 +445,7 @@
                 });
                 var storedFunctionContainer = document.getElementById("mongo-storage");
                 storedFunctionContainer.insertAdjacentHTML('beforeend', storedFunctionHTML);
+                this.calcCache.push(equation);
             } else {
                 alert("Error storing function: " + event.target.response);
             }
@@ -721,6 +718,7 @@
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
     jsCalc.initCanvas();
+    jsCalc.loadDBToCache();
     
     newFunctionButton.addEventListener('click', function (event) {
         jsCalc.newLine();

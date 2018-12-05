@@ -17,6 +17,10 @@
   background: #fff;
 }
 
+p {
+  color: #fff;
+}
+
 #graph-wrapper {
   position: relative;
   bottom: 0;
