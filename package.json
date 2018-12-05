@@ -9,7 +9,7 @@
     "dev": "nodemon server.js",
     "prestart": "npm run build",
     "build": "handlebars views/partials/inputField.handlebars -f public/inputFieldTemplate.js",
-    "build": "views/partials/storedFunction.handlebars -f public/storedFunctionTemplate.js"
+    "build": "handlebars views/partials/storedFunction.handlebars -f public/storedFunctionTemplate.js"
   },
   "repository": {
     "type": "git",
