@@ -405,8 +405,10 @@
     ***************************************************/
     this.loadDBToCache = function() {
         var mongoStorage = document.getElementById("mongo-storage");
+        var mongoArray = Array.from(mongoStorage);
         var self = this;
-        mongoStorage.forEach(function (element) {
+        console.log(mongoArray);
+        mongoArray.forEach(function (element) {
             console.log(element);
             if(self.calcCache.indexOf(element) == -1)
                 self.calcCache.push(element);
