@@ -25,16 +25,20 @@ app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (req, res, next) {
     var equationsCollection = mongoDB.collection('equations');
-    var equations = equationsCollection.find().toArray();
-    if(this) {
-      console.log(equations);
-      res.status(200).render('canvas', equations);
-    } else {
+    equationsCollection.find().toArray(function (err, equationDocs) {
+      if(err) {
+        res.status(500).send("Error connecting to the DB");
+      } else if(equationDocs.length > 0) {
+        console.log(equationDocs);
+        console.log(equationDocs[0]);
+        res.status(200).render('canvas', equationDocs);
+      } else {
         next();
-    }
+      }
+    });
 });
 
-app.get('/equations', function(req,res,next) {
+/*app.get('/equations', function(req,res,next) {
   var equationsCollection = mongoDB.collection('equations');
   equationsCollection.find({}).toArray(function(err,equationsDocs) {
     if (err) {
@@ -66,7 +70,7 @@ app.get('/equations/:n', function (req, res, next) {
       }
     });
 
-});
+});*/
 
 app.get('*', function (req, res) {
     //res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
