@@ -56,6 +56,7 @@ app.get('/equations/:n', function (req, res, next) {
       else if (equationsDocs.length > 0) {
         console.log(func);
         console.log(equationsDocs[0].func);
+        console.log(equationsDocs);
         res.status(200).render('canvas',equationsDocs[0]);
       }
       else {
@@ -95,7 +96,6 @@ app.post('/push-equation', function (req, res, next) {
   console.log('received post');
   if(req.body && req.body.func) {
     var equationsCollection = mongoDB.collection('equations');
-    console.log('poop');
     equationsCollection.insertOne(
       {func: req.body.func},
       function (err, result) {
