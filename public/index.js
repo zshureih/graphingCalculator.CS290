@@ -599,8 +599,9 @@
     this.newLine = function() {
         var equationInputFields = document.getElementsByClassName('input-field');
         var currentLineNumber = this.lines.length;
+        console.log(currentLineNumber);
         
-        if(equationInputFields[currentLineNumber - 1].value == "") {
+        if(equationInputFields[currentLineNumber - 1].value == "" && currentLineNumber > 0) {
             return;
         }
 
