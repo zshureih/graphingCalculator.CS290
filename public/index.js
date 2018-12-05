@@ -3,7 +3,7 @@
  ***************************************************/
 
  function JSgCalc (element) {
-    this.graph = document.getElementById(element);
+    this.graph = document.getElementById('graph');
     this.width = document.getElementById('graph-wrapper').width;
     this.height = document.getElementById('graph-wrapper').height;
     this.maxGridLines = {x: 13, y: 13};
@@ -408,6 +408,7 @@
         var self = this;
         console.log(mongoStorage);
         for(var i = 0; i < mongoStorage.length; i++) {
+            console.log(mongoStorage[i]);
             if(!mongoStorage[i].length){
                 var func = mongoStorage[i].getAttribute("data-equation");
                 if (self.calcCache.indexOf(func) == -1)
@@ -415,7 +416,7 @@
             }
         }
         console.log(this.calcCache);
-    };
+    }
 
     /****************************************************
     * This function pushes equations from calcCache into
@@ -446,7 +447,7 @@
 
         postRequest.setRequestHeader('Content-Type', 'application/json');
         postRequest.send(requestBody);
-    };
+    }
 
     /****************************************************
     * This function draws the equation
@@ -702,8 +703,11 @@
   * wait until DOM is loaded to add event liseners
   */
  window.addEventListener('DOMContentLoaded', function () {
+
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
+    var clearButton = document.getElementById('clear-button');
+    var context = graph.getContext('2d');
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
