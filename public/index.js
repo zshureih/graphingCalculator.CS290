@@ -736,8 +736,8 @@
 
     var savedFunctions = document.getElementById('mongo-storage').childNodes;
     for(var i = 0; i < savedFunctions.length; i++) {
-        console.log(savedFunctions[i]);
         if(!savedFunctions[i].length) {
+            console.log(savedFunctions[i]);
             savedFunctions[i].addEventListener('click', function (event) {
                 var equation = savedFunctions[i].getAttribute('data-equation');
                 jsCalc.writeStoredEquation(equation);
