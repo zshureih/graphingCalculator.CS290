@@ -600,7 +600,7 @@
         var equationInputFields = document.getElementsByClassName('input-field');
         var currentLineNumber = this.lines.length;
         
-        if(equationInputFields[currentLineNumber].value == "") {
+        if(equationInputFields[currentLineNumber - 1].value == "") {
             return;
         }
 
