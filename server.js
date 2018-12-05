@@ -78,7 +78,7 @@ app.listen(port, function () {
 });
 */
 
-app.post('/get-equations', function(req, res, next) {
+/*app.post('/get-equations', function(req, res, next) {
   console.log('received post');
   if(req.body) {
     var equationsCollection = mongoDB.collection('equations');
@@ -94,7 +94,7 @@ app.post('/get-equations', function(req, res, next) {
       }
     });
   }
-});
+});*/
 
 app.post('/push-equation', function (req, res, next) {
   console.log('received post');
