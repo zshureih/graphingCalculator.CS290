@@ -79,7 +79,7 @@ app.post('/push-equation', function (req, res, next) {
   console.log('received post');
   if(req.body && req.body.func) {
     var equationsCollection = mongoDB.collection('equations');
-    equationsCollection.insert(
+    equationsCollection.insertOne(
       {func: req.body.func},
       function (err, result) {
         if(err) {

@@ -420,12 +420,11 @@
 
         postRequest.addEventListener('load', function (event) {
             if(event.target.status === 200) {
-                var storedFunctionTemplate = Handlebars.templates.storedFunction;
-                var newStoredFunctionHTML = storedFunctionTemplate({
+                var storedFunctionHTML = Handlebars.templates.storedFunction({
                     func: equation
                 });
                 var storedFunctionContainer = document.getElementById("mongo-storage");
-                storedFunctionContainer.insertAdjacentElement('beforeend', newStoredFunctionHTML);
+                storedFunctionContainer.insertAdjacentElement('beforeend', storedFunctionHTML);
             } else {
                 alert("Error storing function: " + event.target.response);
             }
