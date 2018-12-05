@@ -732,7 +732,7 @@
 
     for(var i = 0; i < savedFunctions.length; i++) {
         if(!savedFunctions[i].length) {
-            savedFunctions[i].addEventListener(function (event) {
+            savedFunctions[i].addEventListener('click', function (event) {
                 jsCalc.writeStoredEquation(savedFunctions[i]);
             });
         }
