@@ -666,6 +666,7 @@
     ***************************************************/
     this.writeStoredEquation = function (equation) {
         var inputBoxes = document.getElementsByClassName('input-field');
+        console.log(inputBoxes);
         if(inputBoxes[inputBoxes.length - 1].value = ""){
             inputBoxes[inputBoxes.length - 1].value = equation;
             this.newLine();
@@ -737,9 +738,7 @@
     var mongoStorage = document.getElementById("mongo-storage").childNodes;
     for(var i = 0; i < mongoStorage.length; i++) {
         if(!mongoStorage[i].length) {
-            console.log(mongoStorage[i]);
             mongoStorage[i].addEventListener('click', function (event) {
-                console.log(i + ", " + this);
                 var equation = this.getAttribute('data-equation');
                 jsCalc.writeStoredEquation(equation);
             });
