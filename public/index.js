@@ -432,7 +432,8 @@
         var requestBody = JSON.stringify({ 
             func: equation
         });
-
+        
+        var self = this;
         postRequest.addEventListener('load', function (event) {
             if(event.target.status === 200) {
                 var storedFunctionHTML = Handlebars.templates.storedFunction({
@@ -440,7 +441,7 @@
                 });
                 var storedFunctionContainer = document.getElementById("mongo-storage");
                 storedFunctionContainer.insertAdjacentHTML('beforeend', storedFunctionHTML);
-                this.calcCache.push(equation);
+                self.calcCache.push(equation);
             } else {
                 alert("Error storing function: " + event.target.response);
             }
