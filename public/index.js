@@ -735,7 +735,7 @@
     });
 
     var mongoStorage = document.getElementById("mongo-storage").childNodes;
-    for(var i = 0; i < savedFunctions.length; i++) {
+    for(var i = 0; i < mongoStorage.length; i++) {
         if(!mongoStorage[i].length) {
             console.log(mongoStorage[i]);
             mongoStorage[i].addEventListener('click', function (event) {
