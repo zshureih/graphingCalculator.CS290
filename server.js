@@ -13,7 +13,7 @@ var mongoDBName = process.env.MONGO_DB_NAME;
 var mongoURL = "mongodb://" + mongoUsername + ":" + mongoPassword + "@" + mongoHost + ":" + mongoPort + "/" + mongoDBName;
 var mongoDB = null;
 var app = express();
-//var postData = require('./postData.json');
+var equationJSON = require('./equations.json');
 var port = process.env.PORT || 3007;
 console.log(mongoURL);
 
@@ -75,6 +75,22 @@ app.listen(port, function () {
 });
 */
 
+app.post('/get-equations', function(req, res, next) {
+  console.log('received post');
+  if(req.body) {
+    var equationsCollection = mongoDB.collection('equations');
+    equationsCollection.find().toArray(function (err, equations) {
+      if(err) {
+        res.status(500).send("Error communicating with DB");
+      } else if (equations.length > 0) {
+        res.status(200).render('canvas', equations);
+      } else {
+        next();
+      }
+    });
+  }
+});
+
 app.post('/push-equation', function (req, res, next) {
   console.log('received post');
   if(req.body && req.body.func) {
@@ -86,7 +102,6 @@ app.post('/push-equation', function (req, res, next) {
         if(err) {
           res.status(500).send("Error saving eqaution to DB");
         } else if(result){
-          console.log('hey')
           res.status(200).send("Success");
         } else {
           next();
