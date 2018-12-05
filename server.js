@@ -46,7 +46,7 @@ app.get('/equations', function(req,res,next) {
 });
 
 app.get('/equations/:n', function (req, res, next) {
-    var func = req.params.func;
+    var func = req.params.n;
     var equationsCollection = mongoDB.collection('equations');
     equationsCollection.find({equationNamess: func}).toArray(function(err,equationsDocs) {
       if (err) {
