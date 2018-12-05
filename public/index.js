@@ -473,7 +473,7 @@
         var scale = this.getScale();
 
         if(this.calcCache.indexOf(equation) == -1) {
-            this.calcCache[equation] = {equation};
+            this.calcCache.push(equation);
             this.pushToDB(equation);
         }
 
@@ -610,6 +610,27 @@
         
         if(equationInputFields[currentLineNumber].value == "") {
             return;
+        }
+
+        //check each character in the equation
+        for(var i = 0; i < equationInputFields[currentLineNumber].value.length; i++) {
+            var currentCode = equationInputFields[currentLineNumber].value.charCodeAt(i)
+            if (currentCode < 40) {
+                alert("Invalid Character: ", equationInputFields[currentLineNumber].value[i]);
+                return;
+            }
+            if (currentCode < 94 && currentCode > 62) {
+                alert("Invalid Character: ", equationInputFields[currentLineNumber].value[i]);
+                return;
+            }
+            if (currentCode == 95 || currentCode == 96) {
+                alert("Invalid Character: ", equationInputFields[currentLineNumber].value[i]);
+                return;
+            }
+            if (currentCode < 127 && currentCode > 124) {
+                alert("Invalid Character: ", equationInputFields[currentLineNumber].value[i]);
+                return;
+            }
         }
 
         //decide on color
