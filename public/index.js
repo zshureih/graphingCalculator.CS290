@@ -734,14 +734,13 @@
         jsCalc.removeInput();
     });
 
-    var savedFunctions = document.getElementById('mongo-storage').childNodes;
+    var mongoStorage = document.getElementById("mongo-storage").childNodes;
     for(var i = 0; i < savedFunctions.length; i++) {
-        if(!savedFunctions[i].length) {
-            console.log(savedFunctions[i]);
-            savedFunctions[i].addEventListener('click', function (event) {
-                var equations = document.getElementById('mongo-storage').childNodes;
-                console.log(equations);
-                var equation = equations[i].getAttribute('data-equation');
+        if(!mongoStorage[i].length) {
+            console.log(mongoStorage[i]);
+            mongoStorage[i].addEventListener('click', function (event) {
+                console.log(i + ", " + mongoStorage[i]);
+                var equation = mongoStorage[i].getAttribute('data-equation');
                 jsCalc.writeStoredEquation(equation);
             });
         }
