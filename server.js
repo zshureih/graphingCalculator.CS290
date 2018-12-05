@@ -79,13 +79,16 @@ app.post('/push-equation', function (req, res, next) {
   console.log('received post');
   if(req.body && req.body.func) {
     var equationsCollection = mongoDB.collection('equations');
+    console.log('poop');
     equationsCollection.insertOne(
       {func: req.body.func},
       function (err, result) {
         if(err) {
           res.status(500).send("Error saving eqaution to DB");
-        } else {
+        } else if(result){
           res.status(200).send("Success");
+        } else {
+          next();
         }
       }
     );
