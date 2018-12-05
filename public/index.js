@@ -726,7 +726,6 @@
         if(!savedFunctions[i].length) {
             savedFunctions[i].addEventListener('click', function (event) {
                 jsCalc.lines.push(savedFunctions[i]);
-                jsCalc.insertNewInput();
                 inputBoxes[inputBoxes.length - 1].value = savedFunctions[i];
                 jsCalc.newLine();
             });
