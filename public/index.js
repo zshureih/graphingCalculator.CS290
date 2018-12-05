@@ -432,8 +432,7 @@
         var requestBody = JSON.stringify({ 
             func: equation
         });
-        
-        var self = this;
+
         postRequest.addEventListener('load', function (event) {
             if(event.target.status === 200) {
                 var storedFunctionHTML = Handlebars.templates.storedFunction({
@@ -441,7 +440,7 @@
                 });
                 var storedFunctionContainer = document.getElementById("mongo-storage");
                 storedFunctionContainer.insertAdjacentHTML('beforeend', storedFunctionHTML);
-                self.calcCache.push(equation);
+                this.calcCache.push(equation);
             } else {
                 alert("Error storing function: " + event.target.response);
             }
@@ -572,7 +571,7 @@
     ***************************************************/
     this.insertNewInput = function () {
         //decide on color
-        //the function is called after the new line is drawn
+        //the function is called after the new
         var newColor = -1;
         for (var color in this.lineColors) {
             if (this.lineColors[color] == -1) {
@@ -600,52 +599,33 @@
     this.newLine = function() {
         var equationInputFields = document.getElementsByClassName('input-field');
         var currentLineNumber = this.lines.length;
+        
+        if(equationInputFields[currentLineNumber].value == "") {
+            return;
+        }
 
         //decide on color
         var newColor = -1;
-        for (var color in this.lineColors) {
-            if (this.lineColors[color] == -1) {
+        for(var color in this.lineColors) {
+            if(this.lineColors[color] == -1){
                 newColor = color;
                 break;
             }
         }
-        
-        if(currentLineNumber > 0) {
-            if (equationInputFields[currentLineNumber - 1].value == "") {
-                return;
-            }
 
-            if (newColor == -1) {
-                alert("There are no available colors left for the new function");
-            } else {
-                this.lineColors[newColor] = currentLineNumber;
-                var newLine = {
-                    equation: equationInputFields[currentLineNumber - 1].value,
-                    color: newColor
-                };
-
-                this.lines.push(newLine);
-                this.insertNewInput();
-                this.draw();
-            }        
+        if(newColor == -1) {
+            alert("There are no available colors left for the new function");
         } else {
-            if(equationInputFields[0].value == "") {
-                return;
-            }
-            if (newColor == -1) {
-                alert("There are no available colors left for the new function");
-            } else {
-                this.lineColors[newColor] = currentLineNumber;
-                var newLine = {
-                    equation: equationInputFields[0].value,
-                    color: newColor
-                };
+            this.lineColors[newColor] = currentLineNumber;
+            var newLine = {
+                equation: equationInputFields[currentLineNumber].value,
+                color: newColor
+            };
 
-                this.lines.push(newLine);
-                this.insertNewInput();
-                this.draw();
-            }
-        }
+            this.lines.push(newLine);
+            this.insertNewInput();
+            this.draw();
+        }        
     };
 
     /****************************************************
@@ -677,20 +657,6 @@
             this.lineColors[fieldColor] = -1;
             inputWrappers[inputWrappers.length - 1].remove();
             this.draw();
-        }
-    };
-
-    /****************************************************
-    * This function overwrites the current input field
-    * with the stored equation that was clicked
-    ***************************************************/
-    this.writeStoredEquation = function (equation) {
-        var inputBoxes = document.getElementsByClassName('input-field');
-        if(inputBoxes[inputBoxes.length - 1].value == ""){
-            inputBoxes[inputBoxes.length - 1].value = equation;
-            this.newLine();
-        } else {
-            alert("Please empty the last input box first");
         }
     };
 
@@ -753,14 +719,4 @@
     removeInputButton.addEventListener('click', function (event) {
         jsCalc.removeInput();
     });
-
-    var mongoStorage = document.getElementById("mongo-storage").childNodes;
-    for(var i = 0; i < mongoStorage.length; i++) {
-        if(!mongoStorage[i].length) {
-            mongoStorage[i].addEventListener('click', function (event) {
-                var equation = this.getAttribute('data-equation');
-                jsCalc.writeStoredEquation(equation);
-            });
-        }
-    }
  });
