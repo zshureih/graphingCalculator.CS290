@@ -601,9 +601,12 @@
         var currentLineNumber = this.lines.length;
         console.log(currentLineNumber);
         
-        if(equationInputFields[currentLineNumber - 1].value == "" && currentLineNumber > 0) {
-            return;
+        if(currentLineNumber > 0) {
+            if (equationInputFields[currentLineNumber - 1].value == "") {
+                return;
+            }
         }
+        
 
         //decide on color
         var newColor = -1;
