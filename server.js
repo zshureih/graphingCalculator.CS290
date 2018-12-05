@@ -28,7 +28,7 @@ app.get('/', function (req, res, next) {
     equationsCollection.find().toArray(function (err, equationDocs) {
       if(err) {
         res.status(500).send("Error connecting to the DB");
-      } else if(equationDocs.length > 0) {
+      } else if(equationDocs.length >= 0) {
         console.log(equationDocs);
         res.status(200).render('canvas', equationDocs);
       } else {
