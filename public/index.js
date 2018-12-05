@@ -618,7 +618,7 @@
         } else {
             this.lineColors[newColor] = currentLineNumber;
             var newLine = {
-                equation: equationInputFields[currentLineNumber].value,
+                equation: equationInputFields[currentLineNumber - 1].value,
                 color: newColor
             };
 
@@ -658,6 +658,15 @@
             inputWrappers[inputWrappers.length - 1].remove();
             this.draw();
         }
+    };
+
+    /****************************************************
+    * This function overwrites the current input field
+    * with the stored equation that was clicked
+    ***************************************************/
+    this.writeStoredEquation = function (equation) {
+        var inputBoxes = document.getElementsByClassName('input-field');
+        inputBoxes[inputBoxes.length - 1].value = equation;
     };
 
     /****************************************************
@@ -707,7 +716,6 @@
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
     var savedFunctions = document.getElementById('mongo-storage').childNodes;
-    var inputBoxes = document.getElementsByClassName('input-field');
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
@@ -724,10 +732,8 @@
 
     for(var i = 0; i < savedFunctions.length; i++) {
         if(!savedFunctions[i].length) {
-            savedFunctions[i].addEventListener('click', function (event) {
-                jsCalc.lines.push(savedFunctions[i]);
-                inputBoxes[inputBoxes.length - 1].value = savedFunctions[i];
-                jsCalc.newLine();
+            savedFunctions[i].addEventListener(function (event) {
+                jsCalc.writeStoredEquation(savedFunctions[i]);
             });
         }
     }
