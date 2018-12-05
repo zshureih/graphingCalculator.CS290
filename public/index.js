@@ -666,7 +666,12 @@
     ***************************************************/
     this.writeStoredEquation = function (equation) {
         var inputBoxes = document.getElementsByClassName('input-field');
-        inputBoxes[inputBoxes.length - 1].value = equation;
+        if(inputBoxes[inputBoxes.length - 1].value = ""){
+            inputBoxes[inputBoxes.length - 1].value = equation;
+            this.newLine();
+        } else {
+            alert("Please empty the last input box first");
+        }
     };
 
     /****************************************************
@@ -733,7 +738,8 @@
     for(var i = 0; i < savedFunctions.length; i++) {
         if(!savedFunctions[i].length) {
             savedFunctions[i].addEventListener('click', function (event) {
-                jsCalc.writeStoredEquation(savedFunctions[i]);
+                var equation = savedFunctions[i].getAttribute('data-equation');
+                jsCalc.writeStoredEquation(equation);
             });
         }
     }
