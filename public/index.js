@@ -718,7 +718,7 @@
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
     jsCalc.initCanvas();
-    jsCalc.loadDBToCache();
+    //jsCalc.loadDBToCache();
     
     newFunctionButton.addEventListener('click', function (event) {
         jsCalc.newLine();
