@@ -599,37 +599,52 @@
     this.newLine = function() {
         var equationInputFields = document.getElementsByClassName('input-field');
         var currentLineNumber = this.lines.length;
-        console.log(currentLineNumber);
+
+        //decide on color
+        var newColor = -1;
+        for (var color in this.lineColors) {
+            if (this.lineColors[color] == -1) {
+                newColor = color;
+                break;
+            }
+        }
         
         if(currentLineNumber > 0) {
             if (equationInputFields[currentLineNumber - 1].value == "") {
                 return;
             }
-        }
-        
 
-        //decide on color
-        var newColor = -1;
-        for(var color in this.lineColors) {
-            if(this.lineColors[color] == -1){
-                newColor = color;
-                break;
+            if (newColor == -1) {
+                alert("There are no available colors left for the new function");
+            } else {
+                this.lineColors[newColor] = currentLineNumber;
+                var newLine = {
+                    equation: equationInputFields[currentLineNumber - 1].value,
+                    color: newColor
+                };
+
+                this.lines.push(newLine);
+                this.insertNewInput();
+                this.draw();
+            }        
+        } else {
+            if(equationInputFields[0].value == "") {
+                return;
+            }
+            if (newColor == -1) {
+                alert("There are no available colors left for the new function");
+            } else {
+                this.lineColors[newColor] = currentLineNumber;
+                var newLine = {
+                    equation: equationInputFields[0].value,
+                    color: newColor
+                };
+
+                this.lines.push(newLine);
+                this.insertNewInput();
+                this.draw();
             }
         }
-
-        if(newColor == -1) {
-            alert("There are no available colors left for the new function");
-        } else {
-            this.lineColors[newColor] = currentLineNumber;
-            var newLine = {
-                equation: equationInputFields[currentLineNumber - 1].value,
-                color: newColor
-            };
-
-            this.lines.push(newLine);
-            this.insertNewInput();
-            this.draw();
-        }        
     };
 
     /****************************************************
