@@ -735,8 +735,8 @@
     });
 
     var savedFunctions = document.getElementById('mongo-storage').childNodes;
-    console.log(savedFunctions);
     for(var i = 0; i < savedFunctions.length; i++) {
+        console.log(savedFunctions[i]);
         if(!savedFunctions[i].length) {
             savedFunctions[i].addEventListener('click', function (event) {
                 var equation = savedFunctions[i].getAttribute('data-equation');
