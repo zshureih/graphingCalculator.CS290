@@ -408,7 +408,6 @@
         var self = this;
         console.log(mongoStorage);
         for(var i = 0; i < mongoStorage.length; i++) {
-            console.log(mongoStorage[i]);
             if(!mongoStorage[i].length){
                 var func = mongoStorage[i].getAttribute("data-equation");
                 if (self.calcCache.indexOf(func) == -1)
@@ -706,8 +705,6 @@
 
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
-    var clearButton = document.getElementById('clear-button');
-    var context = graph.getContext('2d');
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
