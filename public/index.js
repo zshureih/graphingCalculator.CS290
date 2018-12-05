@@ -15,7 +15,7 @@
     this.mouseButton = 0;
     this.canvasX = this.graph.offsetLeft;
     this.canvasY = this.graph.offsetTop;
-    this.calcCache = []; //to be used with MongoDB
+    this.calcCache = []; //to be used with MongoDB to make processes easier
     this.quality = 1.0;
     this.zoomFactor = 0.1;
     this.lines = [];
@@ -405,7 +405,13 @@
     ***************************************************/
     this.loadDBToCache = function() {
         var mongoStorage = document.getElementById("mongo-storage");
-        console.log(mongoStorage);
+        var self = this;
+        mongoStorage.forEach(function (element) {
+            console.log(element);
+            if(self.calcCache.indexOf(element) == -1)
+                self.calcCache.push(element);
+        });
+        console.log(this.calcCache);
     }
 
     /****************************************************
