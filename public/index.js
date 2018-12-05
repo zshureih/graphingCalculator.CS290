@@ -738,8 +738,8 @@
     for(var i = 0; i < savedFunctions.length; i++) {
         if(!savedFunctions[i].length) {
             console.log(savedFunctions[i]);
-            savedFunctions[i].addEventListener('click', function (event) {
-                var equation = savedFunctions[i].getAttribute('data-equation');
+            savedFunctions[i].addEventListener('click', function (element) {
+                var equation = element.getAttribute('data-equation');
                 jsCalc.writeStoredEquation(equation);
             });
         }
