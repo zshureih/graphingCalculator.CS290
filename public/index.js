@@ -666,8 +666,7 @@
     ***************************************************/
     this.writeStoredEquation = function (equation) {
         var inputBoxes = document.getElementsByClassName('input-field');
-        console.log(inputBoxes);
-        if(inputBoxes[inputBoxes.length - 1].value = ""){
+        if(inputBoxes[inputBoxes.length - 1].value == ""){
             inputBoxes[inputBoxes.length - 1].value = equation;
             this.newLine();
         } else {
