@@ -571,7 +571,7 @@
     ***************************************************/
     this.insertNewInput = function () {
         //decide on color
-        //the function is called after the new
+        //the function is called after the new line is drawn
         var newColor = -1;
         for (var color in this.lineColors) {
             if (this.lineColors[color] == -1) {
@@ -706,9 +706,8 @@
  window.addEventListener('DOMContentLoaded', function () {
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
-    var clearButton = document.getElementById('clear-button');
-    console.log(removeInputButton);
-    var context = graph.getContext('2d');
+    var savedFunctions = document.getElementById('mongo-storage').childNodes;
+    var inputBoxes = document.getElementsByClassName()
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
@@ -722,4 +721,15 @@
     removeInputButton.addEventListener('click', function (event) {
         jsCalc.removeInput();
     });
+
+    for(var i = 0; i < savedFunctions.length; i++) {
+        if(!savedFunctions[i].length) {
+            savedFunctions[i].addEventListener('click', function (event) {
+                jsCalc.lines.push(savedFunctions[i]);
+                jsCalc.insertNewInput();
+                inputBoxes[inputBoxes.length - 1].value = savedFunctions[i];
+                jsCalc.newLine();
+            });
+        }
+    }
  });
