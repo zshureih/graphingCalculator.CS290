@@ -437,7 +437,6 @@
             func: equation
         });
 
-        var self = this;
         postRequest.addEventListener('load', function (event) {
             if(event.target.status === 200) {
                 var storedFunctionHTML = Handlebars.templates.storedFunction({
@@ -445,14 +444,13 @@
                 });
                 var storedFunctionContainer = document.getElementById("mongo-storage");
                 storedFunctionContainer.insertAdjacentHTML('beforeend', storedFunctionHTML);
-                self.calcCache.push(equation);
             } else {
                 alert("Error storing function: " + event.target.response);
             }
         });
 
         postRequest.setRequestHeader('Content-Type', 'application/json');
-        postRequest.send(requestBody);
+        postRequest.send(requestBody);       
     }
 
     /****************************************************
@@ -472,9 +470,10 @@
 
         var scale = this.getScale();
 
+        //if new equation
         if(this.calcCache.indexOf(equation) == -1) {
-            this.calcCache.push(equation);
-            this.pushToDB(equation);
+            this.calcCache.push(equation); //add to client-side cache
+            this.pushToDB(equation); //add to mongoDB
         }
 
         this.ctx.strokeStyle = color;
@@ -579,7 +578,7 @@
     ***************************************************/
     this.insertNewInput = function () {
         //decide on color
-        //the function is called after the new
+        //the function is called after the new line
         var newColor = -1;
         for (var color in this.lineColors) {
             if (this.lineColors[color] == -1) {
@@ -690,6 +689,26 @@
     };
 
     /****************************************************
+    * This function takes a stored equation and graphs it
+    * and adds another input field automatically
+    ***************************************************/
+    this.addStoredInput = function (equation) {
+        var inputFields = document.getElementsByClassName("input-field");
+        var emptyField = null;
+        for(var i = 0; i < inputFields.length; i++) {
+            if(inputFields[i].value == ""){
+                emptyField = inputFields[i];
+                break;
+            }
+        }
+        
+        emptyField.value = equation;
+        //fill current empty input
+
+        this.newLine();
+    };
+
+    /****************************************************
     * This function initializes the canvas
     ***************************************************/
     this.initCanvas = function () {
@@ -735,6 +754,8 @@
  window.addEventListener('DOMContentLoaded', function () {
     var newFunctionButton = document.getElementById('new-function-button');
     var removeInputButton = document.getElementById('remove-function-button');
+    var storedFunctions = document.getElementById("mongo-storage");
+    console.log("storedFunctions: ", storedFunctions);
 
     //click update button to graph new functions
     jsCalc = new JSgCalc("graph");
@@ -748,4 +769,12 @@
     removeInputButton.addEventListener('click', function (event) {
         jsCalc.removeInput();
     });
+
+    storedFunctions.addEventListener('click', function(event) {
+        if(event.target && event.target.nodeName == 'P') {
+            console.log(event.target.innerHTML);
+            var equation = event.target.innerHTML;
+            jsCalc.addStoredInput(equation);
+        }
+    })
  });
