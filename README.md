@@ -5,11 +5,10 @@ Contributors: Zeyad Shureih, Cade Conklin
 
 Goal: Create a fully functioning graphing calculator with standard features.
 
-Base Features: 
-Supports common math syntaxes
-Graphs 2-Dimensional parametric functions
-Buttons to insert special formatting and operations
-Save frequently used functions and equations
+## Base Features: 
+* * *
+* Draws single variable functions
+* Stores previous functions and allows for easy access to them
 
 Tutorial used to set up canvas:
 https://www.youtube.com/watch?v=E-_Lc6FrDRw
